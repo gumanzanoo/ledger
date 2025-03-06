@@ -13,7 +13,10 @@ func TestMakeDepositUC_ExecuteDeposit(t *testing.T) {
 		mockTransactionRepo := new(MockTransactionRepository)
 		mockAccountRepo := new(MockAccountRepository)
 
-		depositUC := NewMakeDepositUC(mockTransactionRepo, mockAccountRepo)
+		depositUC := MakeDepositUC{
+			transactionRepository: mockTransactionRepo,
+			accountRepository: mockAccountRepo,
+		}
 
 		input := ExecuteDepositInput{
 			accountOwnerDocument: "12345678901",
@@ -29,7 +32,7 @@ func TestMakeDepositUC_ExecuteDeposit(t *testing.T) {
 		creditTransaction := entities.NewTransaction(vo.RelatedTransactionID{}, account.OwnerDocument(), vo.TransactionTypeCredit, input.amount)
 
 		mockTransactionRepo.On("InsertTransaction", mock.Anything).Return(creditTransaction, nil)
-		mockAccountRepo.On("GetOwnerByDocument", mock.Anything).Return(account, nil)
+		mockAccountRepo.On("GetAccountByDocument", mock.Anything).Return(account, nil)
 
 		err = depositUC.ExecuteDeposit(input)
 		require.NoError(t, err)

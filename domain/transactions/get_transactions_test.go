@@ -13,7 +13,10 @@ func TestGetTransactionsUC_GetTransactions(t *testing.T) {
 		mockTransactionRepo := new(MockTransactionRepository)
 		mockAccountRepo := new(MockAccountRepository)
 
-		getTransactionsUC := NewGetTransactionsUC(mockTransactionRepo, mockAccountRepo)
+		getTransactionsUC := GetTransactionsUC{
+			transactionRepository: mockTransactionRepo,
+			accountRepository: mockAccountRepo,
+		}
 
 		input := GetTransactionsInput{accountOwnerDocument: "12345678901"}
 
@@ -30,7 +33,7 @@ func TestGetTransactionsUC_GetTransactions(t *testing.T) {
 			entities.NewTransaction(vo.RelatedTransactionID{}, account.OwnerDocument(), vo.TransactionTypeCredit, 5000),
 		}
 
-		mockAccountRepo.On("GetOwnerByDocument", mock.Anything).Return(account, nil)
+		mockAccountRepo.On("GetAccountByDocument", mock.Anything).Return(account, nil)
 		mockTransactionRepo.On("GetTransactionsByDocument", mock.Anything).Return(transactions, nil)
 
 		_, err = getTransactionsUC.GetTransactions(input)

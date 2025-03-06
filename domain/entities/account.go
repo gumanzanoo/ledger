@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	"transactions/domain/vo"
 )
 
@@ -11,11 +12,8 @@ type Account struct {
 	ownerDocument vo.AccountOwnerDocument
 }
 
-func NewAccount(ownerDocument vo.AccountOwnerDocument) Account {
-	return Account{
-		id:            vo.NewAccountID(),
-		ownerDocument: ownerDocument,
-	}
+func (a *Account) ID() vo.AccountID {
+	return a.id
 }
 
 func (a *Account) OwnerDocument() vo.AccountOwnerDocument {
@@ -32,4 +30,30 @@ func (a *Account) CalculateBalance(transactions []Transaction) int {
 		}
 	}
 	return balance
+}
+
+func (a *Account) ParseAccount(
+	id string,
+	ownerDocumentStr string,
+) error {
+	definitiveID, err := vo.ParseAccountID(id)
+	if err != nil {
+		return fmt.Errorf("could not parse account id %s", id)
+	}
+
+	definitiveOwnerDocument, err := vo.ParseAccountOwnerDocument(ownerDocumentStr)
+	if err != nil {
+		return fmt.Errorf("could not parse account owner document %s", ownerDocumentStr)
+	}
+
+	a.id = definitiveID
+	a.ownerDocument = definitiveOwnerDocument
+	return nil
+}
+
+func NewAccount(ownerDocument vo.AccountOwnerDocument) Account {
+	return Account{
+		id:            vo.NewAccountID(),
+		ownerDocument: ownerDocument,
+	}
 }

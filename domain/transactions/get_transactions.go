@@ -11,16 +11,6 @@ type GetTransactionsUC struct {
 	accountRepository     accountRepository
 }
 
-func NewGetTransactionsUC(
-	transactionRepository transactionRepository,
-	accountRepository accountRepository,
-) GetTransactionsUC {
-	return GetTransactionsUC{
-		transactionRepository: transactionRepository,
-		accountRepository:     accountRepository,
-	}
-}
-
 type GetTransactionsInput struct {
 	accountOwnerDocument string
 }
@@ -31,7 +21,7 @@ func (m GetTransactionsUC) GetTransactions(input GetTransactionsInput) ([]entiti
 		return []entities.Transaction{}, err
 	}
 
-	_, err = m.accountRepository.GetOwnerByDocument(ownerDocument)
+	_, err = m.accountRepository.GetAccountByDocument(ownerDocument)
 	if err != nil {
 		return []entities.Transaction{}, fmt.Errorf("the account has no balance")
 	}
